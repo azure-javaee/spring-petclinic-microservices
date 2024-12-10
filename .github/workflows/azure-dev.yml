@@ -32,15 +32,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install azd private preview version
-      - name: Install azd private preview version
+      # Install azd
+      - name: Install azd (feature/sjad version)
         run: |
-          Invoke-RestMethod 'https://azuresdkreleasepreview.blob.core.windows.net/azd/standalone/pr/4586/install-azd.ps1' -OutFile install-azd.ps1; ./install-azd.ps1 -BaseUrl 'https://azuresdkreleasepreview.blob.core.windows.net/azd/standalone/pr/4586' -Version '' -SkipVerify -Verbose
+          Invoke-RestMethod 'https://azuresdkreleasepreview.blob.core.windows.net/azd/standalone/pr/4473/install-azd.ps1' -OutFile install-azd.ps1; ./install-azd.ps1 -BaseUrl 'https://azuresdkreleasepreview.blob.core.windows.net/azd/standalone/pr/4473' -Version '' -SkipVerify -Verbose
+          azd version
         shell: pwsh
 
       - name: Enable azd compose alpha feature
         run: |
           azd config set alpha.compose on
+          azd config list-alpha
         shell: pwsh
 
       - name: Log in with Azure (Federated Credentials)
