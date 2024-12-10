@@ -12,13 +12,15 @@ and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.
 ## Starting services with AZD
 
 1. Clone this spring petclinic microservices repository.
+    ```
+    git clone -b sjad https://github.com/azure-javaee/spring-petclinic-microservices.git
+    ```
 2. If you use the in-memory database,
     1. `azd init`, remove the detected MySQL
     2. `azd up`
 3. If you use the MySQL database,
-    1. delete the `GRANT ALL PRIVILEGES` line from schema.sql
-    2. `azd init`, input the same database name as schema.sql
-    3. add the env `spring.profiles.active: "mysql"` in the `azure.yaml` to use mysql profile
+    1. `azd init`, input the same database name as `schema.sql` (petclinic)
+    2. add `spring.profiles.active: "mysql"` in `azure.yaml` for database-accessing services
     3. `azd up`
 
 ## Starting services locally without Docker
