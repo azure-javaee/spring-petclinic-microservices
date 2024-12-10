@@ -1,0 +1,123 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/azure-javaee/azure-dev/feature/sjad/schemas/alpha/azure.yaml.json
+
+name: spring-petclinic-microservices
+metadata:
+    template: azd-init@0.0.0-dev.0
+services:
+    admin-server:
+        project: spring-petclinic-admin-server
+        host: containerapp
+        language: java
+        env:
+            eureka.client.fetch-registry: "true"
+            eureka.client.register-with-eureka: "true"
+            eureka.client.serviceUrl.defaultZone: https://discovery-server.${containerAppsEnvironment.outputs.defaultDomain}/eureka
+            eureka.instance.prefer-ip-address: "true"
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+    api-gateway:
+        project: spring-petclinic-api-gateway
+        host: containerapp
+        language: java
+        env:
+            eureka.client.fetch-registry: "true"
+            eureka.client.register-with-eureka: "true"
+            eureka.client.serviceUrl.defaultZone: https://discovery-server.${containerAppsEnvironment.outputs.defaultDomain}/eureka
+            eureka.instance.prefer-ip-address: "true"
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+    customers-service:
+        project: spring-petclinic-customers-service
+        host: containerapp
+        language: java
+        env:
+            spring.profiles.active: "mysql"
+            eureka.client.fetch-registry: "true"
+            eureka.client.register-with-eureka: "true"
+            eureka.client.serviceUrl.defaultZone: https://discovery-server.${containerAppsEnvironment.outputs.defaultDomain}/eureka
+            eureka.instance.prefer-ip-address: "true"
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+    discovery-server:
+        project: spring-petclinic-discovery-server
+        host: containerapp
+        language: java
+        env:
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+    spring-petclinic-config-server:
+        project: spring-petclinic-config-server
+        host: containerapp
+        language: java
+    vets-service:
+        project: spring-petclinic-vets-service
+        host: containerapp
+        language: java
+        env:
+            spring.profiles.active: "mysql"
+            eureka.client.fetch-registry: "true"
+            eureka.client.register-with-eureka: "true"
+            eureka.client.serviceUrl.defaultZone: https://discovery-server.${containerAppsEnvironment.outputs.defaultDomain}/eureka
+            eureka.instance.prefer-ip-address: "true"
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+    visits-service:
+        project: spring-petclinic-visits-service
+        host: containerapp
+        language: java
+        env:
+            spring.profiles.active: "mysql"
+            eureka.client.fetch-registry: "true"
+            eureka.client.register-with-eureka: "true"
+            eureka.client.serviceUrl.defaultZone: https://discovery-server.${containerAppsEnvironment.outputs.defaultDomain}/eureka
+            eureka.instance.prefer-ip-address: "true"
+            spring.config.import: optional:configserver:https://spring-petclinic-config-server.${containerAppsEnvironment.outputs.defaultDomain}?fail-fast=true
+hooks:
+    prepackage:
+        windows:
+            shell: pwsh
+            run: .\mvnw.cmd clean package -DskipTests
+        posix:
+            shell: sh
+            run: ./mvnw clean package -DskipTests
+resources:
+    admin-server:
+        type: host.containerapp
+        uses:
+            - discovery-server
+            - spring-petclinic-config-server
+        port: 8080
+    api-gateway:
+        type: host.containerapp
+        uses:
+            - discovery-server
+            - spring-petclinic-config-server
+        port: 8080
+    customers-service:
+        type: host.containerapp
+        uses:
+            - discovery-server
+            - spring-petclinic-config-server
+            - mysql
+        port: 8080
+    discovery-server:
+        type: host.containerapp
+        uses:
+            - spring-petclinic-config-server
+        port: 8761
+    mysql:
+        type: db.mysql
+        authType: userAssignedManagedIdentity
+        databaseName: petclinic
+    spring-petclinic-config-server:
+        type: host.containerapp
+        port: 8888
+    vets-service:
+        type: host.containerapp
+        uses:
+            - discovery-server
+            - spring-petclinic-config-server
+            - mysql
+        port: 8080
+    visits-service:
+        type: host.containerapp
+        uses:
+            - discovery-server
+            - spring-petclinic-config-server
+            - mysql
+        port: 8080

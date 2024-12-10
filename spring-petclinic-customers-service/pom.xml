@@ -50,6 +50,12 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-jdbc-mysql</artifactId>
+            <version>5.16.0</version>
+        </dependency>
+
         <!-- Third parties -->
         <dependency>
             <groupId>com.mysql</groupId>
