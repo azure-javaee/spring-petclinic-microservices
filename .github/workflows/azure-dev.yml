@@ -38,6 +38,8 @@ jobs:
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
+          azd config set alpha.compose on
+          
           azd auth login `
             --client-id "$Env:AZURE_CLIENT_ID" `
             --federated-credential-provider "github" `
@@ -50,6 +52,8 @@ jobs:
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           Write-Host "::add-mask::$($info.clientSecret)"
 
+          azd config set alpha.compose on
+          
           azd auth login `
             --client-id "$($info.clientId)" `
             --client-secret "$($info.clientSecret)" `
